@@ -15,6 +15,10 @@ inputs:
   custom-lint-log:
     description: "(Optional) Paths to the log file(s) by dart run custom_lint command, separated by commas"
     required: false
+  filter-level:
+    description: "Filter levels to comment, separated by commas"
+    required: false
+    default: ""
   verbose:
     description: "Enable verbose logging"
     required: false
@@ -39,6 +43,7 @@ runs:
         CUSTOM_LINT_LOG: ${{ inputs.custom-lint-log }}
         VERBOSE: ${{ inputs.verbose }}
         MAX_ISSUES: ${{ inputs.max-issues }}
+        FILTER_LEVEL: ${{ inputs.filter-level }}
       with:
         retries: 3
         script: |
@@ -49,7 +54,8 @@ runs:
           const workingDir = process.env.GITHUB_WORKSPACE;
           const actionPath = process.env.GITHUB_ACTION_PATH;
           const maxIssues = parseInt(process.env.MAX_ISSUES);
+          const filterLevel = process.env.FILTER_LEVEL;
 
           const path = require('path');
           const script = require(path.join(actionPath, 'index.js'));
-          await script({ core, github, context, workingDir, analyzeLog, customLintLog, verboseLogging, maxIssues })
+          await script({ core, github, context, workingDir, analyzeLog, customLintLog, verboseLogging, maxIssues, filterLevel })
